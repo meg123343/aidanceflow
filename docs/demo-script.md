@@ -1,6 +1,6 @@
 # AIDanceFlow 3 分钟产品录屏稿
 
-录屏要求：16:9 横屏 MP4，控制在 3 分钟以内。建议浏览器打开线上 Demo 或本地 `http://localhost:3000`，画面保持清晰，不加水印和背景杂音。
+录屏要求：16:9 横屏 MP4，控制在 3 分钟以内。建议浏览器打开 GitHub Pages 线上 Demo、Vercel API 版 Demo，或本地 `http://localhost:3000`，画面保持清晰，不加水印和背景杂音。
 
 ## 0:00-0:20 开场：用户问题
 

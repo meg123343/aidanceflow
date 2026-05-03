@@ -168,13 +168,14 @@ AIDanceFlow 是一款面向普通 KOC 的热点手势舞开拍 Agent。
 服务端与 AI 接口：
 
 - Express 本地代理。
-- Vercel Serverless API。
+- GitHub Pages 静态网页发布。
+- Vercel Serverless API，用于线上真实调用可灵接口。
 - 可灵 API：image2video、omni-video、motion-control、任务查询。
 - 本地素材兜底：保证演示流程稳定。
 
 参考人物图：
 
-- `public/reference-character.png` 是线上接口默认使用的参考人物图，部署后通过 `/reference-character.png` 形成可访问 URL。
+- `public/reference-character.png` 是线上接口默认使用的参考人物图，GitHub Pages 或 Vercel 部署后都会通过 `/reference-character.png` 形成可访问 URL。
 - `参考人物` 目录保留原始参考人物素材，便于评审查看和后续替换。
 - image2video 会把参考图作为 `image` 参数；omni-video 会把参考图加入 `image_list`；motion-control 会把参考图作为 `image_url`，并把用户参考视频作为 `video_url`。
 

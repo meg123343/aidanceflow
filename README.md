@@ -36,6 +36,7 @@ AIDanceFlow 的产品思路是把“选题判断”和“内容生产”放在�
 - MediaPipe Pose
 - MediaRecorder API
 - Express 本地代理 / Vercel Serverless API
+- GitHub Pages 静态网页发布
 
 ## AI 能力设计
 
@@ -122,19 +123,18 @@ npm run build
 
 ## 线上部署
 
-推荐路径：私有 GitHub 仓库 + Vercel。这样代码仓库不可公开访问，但产品网页可以通过 Vercel 的 HTTPS 链接给别人体验。
+当前比赛 Demo 推荐使用公开 GitHub 仓库 + GitHub Pages，生成一个别人可以直接点击访问的网页链接。仓库内已经包含 GitHub Actions 发布配置：推送到 `main` 后会自动安装依赖、执行 `npm run build`，并把完整前端、视频素材和 `public/reference-character.png` 发布到 GitHub Pages。
 
-1. 将项目推到 GitHub 私有仓库。
-2. 在 Vercel 选择 Add New Project，导入该 GitHub 仓库。
-3. Framework Preset 选择 Vite。
-4. Build Command 使用 `npm run build`。
-5. Output Directory 使用 `dist`。
-6. 在 Vercel Environment Variables 中配置 `KLING_BASE_URL`、`KLING_ACCESS_KEY`、`KLING_SECRET_KEY`。
-7. 部署完成后使用 Vercel 提供的 HTTPS 链接作为「产品 Demo 链接」。
+1. 将项目上传到公开 GitHub 仓库 `meg123343/aidanceflow`。
+2. 在仓库 `Settings` -> `Pages` 中，将 Source 设置为 `GitHub Actions`。
+3. 等待 Actions 中的 `Deploy GitHub Pages` 流程完成。
+4. 使用 `https://meg123343.github.io/aidanceflow/` 作为「产品 Demo 链接」。
 
-如果只需要前端兜底 Demo，也可以直接在 Vercel 导入私有仓库，不配置可灵密钥；页面仍然可以展示完整的本地示例流程。
+GitHub Pages 只能运行静态前端，不能托管本项目里的 `/api/kling/*` 后端接口。因此 Pages 版本会完整展示趋势选择、解析等待、视频素材、领拍练习、录制回放和发布建议；如果线上可灵 API 暂不可用，会继续走本地示例/兜底领拍内容，保证演示流程不被打断。
 
-注意：前端网页上线后，浏览器会下载打包后的 JS/CSS，这是所有前端网页的基本机制；但源代码仓库、提交历史、README 和未打包文件可以保持私有不可见。
+如果需要让可灵 API 在线真实运行，推荐再部署到 Vercel：导入同一个 GitHub 仓库，Framework Preset 选择 Vite，Build Command 使用 `npm run build`，Output Directory 使用 `dist`，并在 Environment Variables 中配置 `KLING_BASE_URL`、`KLING_ACCESS_KEY`、`KLING_SECRET_KEY`。Vercel 会运行 `api/` 目录下的 Serverless 接口。
+
+注意：公开仓库会公开源码、文档和提交历史；网页上线后浏览器也会下载打包后的 JS/CSS，这是所有前端网页的基本机制。
 
 可选环境变量：
 
@@ -153,7 +153,7 @@ KLING_REFERENCE_IMAGE_URL=https://your-domain/reference-character.png
 
 ## 提交材料
 
-- 产品 Demo 链接：部署到 Vercel 后填写线上访问地址。
+- 产品 Demo 链接：优先填写 GitHub Pages 地址 `https://meg123343.github.io/aidanceflow/`；如部署 Vercel API 版，则填写 Vercel 地址。
 - 录屏介绍：参考 `docs/demo-script.md`，控制在 3 分钟以内，16:9 横屏 MP4。
 - PDF 说明文档：`docs/AIDanceFlow-product-spec.pdf`，正文来源于 `docs/product-spec.md`。
 
