@@ -30,6 +30,30 @@ export interface KlingGenerationResult {
 const POLL_INTERVAL_MS = 3000;
 const MAX_POLLS = 60;
 
+function getStaticHostApiMessage() {
+  if (typeof window !== 'undefined' && window.location.hostname.endsWith('.github.io')) {
+    return '当前打开的是 GitHub Pages 静态演示页，这里没有后端 API。请打开 Vercel 链接测试可灵生成；GitHub Pages 只用于无 API 展示。';
+  }
+  return '';
+}
+
+async function readApiResponse(response: Response, fallback: string) {
+  const contentType = response.headers.get('content-type') ?? '';
+  if (contentType.includes('application/json')) {
+    return response.json().catch(() => ({}));
+  }
+
+  const text = await response.text().catch(() => '');
+  const staticHostMessage = getStaticHostApiMessage();
+  return {
+    error:
+      staticHostMessage ||
+      (text.includes('<!DOCTYPE html>') || text.includes('<html')
+        ? '线上 API 路由没有响应。请确认现在打开的是 Vercel 链接，并且 Vercel 已经重新部署成功。'
+        : text.trim() || fallback),
+  };
+}
+
 export async function createKlingTask(input: KlingGenerationInput): Promise<KlingGenerationResult> {
   const endpointPath =
     input.endpoint === 'image2video' ? '/api/kling/image-guide' : input.endpoint === 'motion-control' ? '/api/kling/motion-control' : '/api/kling/generate';
@@ -37,16 +61,20 @@ export async function createKlingTask(input: KlingGenerationInput): Promise<Klin
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
+  }).catch((error: unknown) => {
+    throw new Error(formatKlingErrorMessage(error instanceof Error ? error.message : '', klingErrorFallbacks.submit));
   });
-  const data = await response.json().catch(() => ({}));
+  const data = await readApiResponse(response, klingErrorFallbacks.submit);
   if (!response.ok) throw new Error(formatKlingErrorMessage(data?.error, klingErrorFallbacks.submit));
   return data;
 }
 
 export async function getKlingTask(taskId: string, endpoint?: KlingGenerationResult['endpoint']): Promise<KlingGenerationResult> {
   const query = endpoint ? `?endpoint=${encodeURIComponent(endpoint)}` : '';
-  const response = await fetch(`/api/kling/tasks/${encodeURIComponent(taskId)}${query}`);
-  const data = await response.json().catch(() => ({}));
+  const response = await fetch(`/api/kling/tasks/${encodeURIComponent(taskId)}${query}`).catch((error: unknown) => {
+    throw new Error(formatKlingErrorMessage(error instanceof Error ? error.message : '', klingErrorFallbacks.query));
+  });
+  const data = await readApiResponse(response, klingErrorFallbacks.query);
   if (!response.ok) throw new Error(formatKlingErrorMessage(data?.error, klingErrorFallbacks.query));
   return data;
 }

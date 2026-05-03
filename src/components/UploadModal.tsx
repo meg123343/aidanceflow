@@ -84,14 +84,14 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[110] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-5">
+        <div className="fixed inset-0 z-[110] flex items-end justify-center overflow-y-auto bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-5">
           <motion.div
             initial={{ opacity: 0, y: 80 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 80 }}
-            className="w-full max-w-[430px] overflow-hidden rounded-t-[32px] border border-white/10 bg-zinc-950 shadow-2xl sm:rounded-[32px]"
+            className="flex max-h-[92vh] w-full max-w-[430px] flex-col overflow-hidden rounded-t-[32px] border border-white/10 bg-zinc-950 shadow-2xl sm:rounded-[32px]"
           >
-            <div className="flex items-center justify-between border-b border-white/10 p-5">
+            <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-white/10 bg-zinc-950 p-5">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-500 text-black">
                   <Sparkles size={21} />
@@ -106,8 +106,9 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
               </button>
             </div>
 
-            {stage === 'input' && (
-              <div className="p-5">
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              {stage === 'input' && (
+                <div className="p-5">
                 <label className="mb-3 flex items-center gap-2 text-xs font-bold tracking-widest text-zinc-400">
                   <LinkIcon size={14} />
                   视频号 / 小红书 / 抖音作品链接
@@ -162,11 +163,11 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
                   <FileVideo size={18} />
                   没有链接？先用示例开始拍
                 </button>
-              </div>
-            )}
+                </div>
+              )}
 
-            {stage === 'analyzing' && (
-              <div className="grid gap-6 p-5">
+              {stage === 'analyzing' && (
+                <div className="grid gap-6 p-5">
                 <div className="relative mx-auto w-full max-w-[260px] overflow-hidden rounded-[26px] border border-white/10 bg-black">
                   <video src={GENERATED_DANCE.videoUrl} className="aspect-[9/16] w-full object-cover opacity-80" autoPlay muted loop playsInline />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/35">
@@ -190,11 +191,11 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
                     ))}
                   </div>
                 </div>
-              </div>
-            )}
+                </div>
+              )}
 
-            {stage === 'ready' && (
-              <div className="grid gap-6 p-5">
+              {stage === 'ready' && (
+                <div className="grid gap-6 p-5">
                 <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-black">
                   <video
                     key={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
@@ -230,8 +231,9 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
                     开始拍
                   </button>
                 </div>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </motion.div>
         </div>
       )}

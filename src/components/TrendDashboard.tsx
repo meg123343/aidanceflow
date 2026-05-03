@@ -18,6 +18,7 @@ import {
   Sparkles,
   TrendingUp,
   Wand2,
+  X,
 } from 'lucide-react';
 import { GENERATED_DANCE, TRENDS, Trend } from '../constants';
 import { createGeneratedTrend, generateKlingGuide, KlingGenerationResult } from '../lib/klingApi';
@@ -294,13 +295,22 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
 
       <AnimatePresence>
         {(isGenerating || generatedReady) && (
-          <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/78 p-0 backdrop-blur-md sm:items-center sm:p-5">
+          <div className="fixed inset-0 z-[100] flex items-end justify-center overflow-y-auto bg-black/78 p-0 backdrop-blur-md sm:items-center sm:p-5">
             <motion.div
               initial={{ opacity: 0, y: 80 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 80 }}
-              className="w-full max-w-[430px] overflow-hidden rounded-t-[32px] border border-white/10 bg-zinc-950 shadow-2xl sm:rounded-[32px]"
+              className="relative max-h-[92vh] w-full max-w-[430px] overflow-y-auto rounded-t-[32px] border border-white/10 bg-zinc-950 shadow-2xl sm:rounded-[32px]"
             >
+              {!isGenerating && (
+                <button
+                  onClick={() => setGeneratedReady(false)}
+                  className="absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-zinc-300 backdrop-blur transition hover:bg-white/10 hover:text-white"
+                  aria-label="关闭"
+                >
+                  <X size={18} />
+                </button>
+              )}
               <div className="grid grid-cols-[0.9fr_1fr] gap-0">
                 <div className="relative bg-black">
                   <video
