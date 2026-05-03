@@ -1,6 +1,4 @@
-import { getReferenceImageUrl, json, readJson } from './_shared';
-import { buildMotionControlPayload } from '../../server/klingClient';
-import type { KlingGenerationRequest } from '../../server/klingClient';
+import { buildMotionControlPayload, getReferenceImageUrl, json, readJson } from '../../server/klingRuntime.js';
 
 function summarizeUrl(value: string) {
   try {
@@ -24,11 +22,11 @@ function summarizeUrl(value: string) {
 }
 
 async function handlePost(request: Request) {
-  const body = (await readJson(request)) as KlingGenerationRequest;
+  const body = await readJson(request);
   return buildDebugResponse(request, body);
 }
 
-function buildDebugResponse(request: Request, body: KlingGenerationRequest) {
+function buildDebugResponse(request: Request, body: any) {
   const imageUrl = body.image || getReferenceImageUrl(request);
   const payload = buildMotionControlPayload(
     {

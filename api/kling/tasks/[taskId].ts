@@ -1,4 +1,4 @@
-import { getKlingClient, json, parseEndpoint } from '../_shared';
+import { getKlingClient, json, parseEndpoint } from '../../../server/klingRuntime.js';
 
 async function handleGet(request: Request) {
   try {

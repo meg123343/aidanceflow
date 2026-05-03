@@ -1,9 +1,8 @@
-import { getKlingClient, getReferenceImageUrl, json, readJson } from './_shared';
-import type { KlingGenerationRequest } from '../../server/klingClient';
+import { getKlingClient, getReferenceImageUrl, json, readJson } from '../../server/klingRuntime.js';
 
 async function handlePost(request: Request) {
   try {
-    const body = (await readJson(request)) as KlingGenerationRequest;
+    const body = await readJson(request);
     if (!body.prompt?.trim()) {
       return json({ error: 'Please enter a generation prompt.' }, { status: 400 });
     }
