@@ -6,5 +6,6 @@ coverage/
 *.log
 .env*
 !.env.example
+.gh-cli/
 .learnings/
 对话.txt
