@@ -1,0 +1,6 @@
+{
+  "name": "AIDanceFlow",
+  "description": "面向普通 KOC 的热点手势舞开拍 Agent，提供趋势推荐、动作拆解、领拍练习和发布建议。",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["趋势推荐", "动作拆解", "AI 领拍生成", "手机化录制"]
+}
