@@ -122,24 +122,19 @@ npm run build
 
 ## 线上部署
 
-推荐路径一：GitHub Pages，适合提交一个别人可直接打开的静态 Demo 链接。
+推荐路径：私有 GitHub 仓库 + Vercel。这样代码仓库不可公开访问，但产品网页可以通过 Vercel 的 HTTPS 链接给别人体验。
 
-1. 将项目推到 GitHub 仓库。
-2. 仓库 Settings -> Pages -> Build and deployment 选择 GitHub Actions。
-3. 本仓库已包含 `.github/workflows/deploy-pages.yml`，推送到 `main` 后会自动构建并发布 `dist`。
-4. 发布完成后使用 GitHub Pages 提供的 `https://用户名.github.io/仓库名/` 作为「产品 Demo 链接」。
-
-GitHub Pages 适合展示完整前端 Demo 和本地兜底流程；如果需要在线调用可灵密钥，推荐使用 Vercel。
-
-推荐路径二：GitHub + Vercel，适合配置服务端环境变量并调用真实可灵 API。
-
-1. 将项目推到 GitHub 仓库。
+1. 将项目推到 GitHub 私有仓库。
 2. 在 Vercel 选择 Add New Project，导入该 GitHub 仓库。
 3. Framework Preset 选择 Vite。
 4. Build Command 使用 `npm run build`。
 5. Output Directory 使用 `dist`。
 6. 在 Vercel Environment Variables 中配置 `KLING_BASE_URL`、`KLING_ACCESS_KEY`、`KLING_SECRET_KEY`。
 7. 部署完成后使用 Vercel 提供的 HTTPS 链接作为「产品 Demo 链接」。
+
+如果只需要前端兜底 Demo，也可以直接在 Vercel 导入私有仓库，不配置可灵密钥；页面仍然可以展示完整的本地示例流程。
+
+注意：前端网页上线后，浏览器会下载打包后的 JS/CSS，这是所有前端网页的基本机制；但源代码仓库、提交历史、README 和未打包文件可以保持私有不可见。
 
 可选环境变量：
 
