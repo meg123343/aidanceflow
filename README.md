@@ -2,7 +2,6 @@
 
 AIDanceFlow 是一款面向普通 KOC 的热点手势舞开拍 Agent。它把“刷到热门内容”之后最难的几步串成一个闭环：AI 选题、动作拆解、领拍参考生成、手机化练习录制、成片回放和发布建议，帮助创作者低成本追上社媒热点。
 
-项目对应赛题⑤「PCG技术线-智能营销/AI小游戏方向」：用 AI + 社媒流量密码，帮助普通 KOC 解决内容定位模糊、选题低效、运营不专业的问题。
 
 ## 当前 Demo 能力
 
@@ -50,15 +49,6 @@ AIDanceFlow 的产品思路是把“选题判断”和“内容生产”放在�
 
 演示时如果线上 API 排队、失败或耗时较长，系统会回落到本地示例动作，保证流程完整。
 
-## 素材映射
-
-`example` 目录提供演示视频素材：
-
-- `手势舞1.mp4`、`手势舞2.mp4`、`手势舞3.mp4`：首页趋势卡片的原作品参考。
-- `舞蹈1.mp4`、`舞蹈2.mp4`、`舞蹈3.mp4`：对应 3 条趋势的领拍参考。
-- `舞蹈4.mp4`：AI 生成编舞或导入失败时的兜底领拍方案。
-
-`public/reference-character.png` 是可灵 image2video / motion-control 默认参考人物图，线上部署后会以 `/reference-character.png` 的形式传给可灵 API。`参考人物` 目录保留原始参考素材，便于说明和替换。
 
 ## 本地运行
 
@@ -87,7 +77,7 @@ npm.cmd install
 npm.cmd run dev
 ```
 
-## 可灵 API 接入
+##  API 接入
 
 复制 `.env.example` 为 `.env`，填写服务端密钥：
 
@@ -112,53 +102,3 @@ npm.cmd run dev:api
 npm.cmd run dev
 ```
 
-## 构建
-
-```bash
-npm run lint
-npm run build
-```
-
-构建结果输出到 `dist`，本仓库不提交 `dist`。
-
-## 线上部署
-
-当前比赛 Demo 推荐使用公开 GitHub 仓库 + GitHub Pages，生成一个别人可以直接点击访问的网页链接。仓库内已经包含 GitHub Actions 发布配置：推送到 `main` 后会自动安装依赖、执行 `npm run build`，并把完整前端、视频素材和 `public/reference-character.png` 发布到 GitHub Pages。
-
-1. 将项目上传到公开 GitHub 仓库 `meg123343/aidanceflow`。
-2. 在仓库 `Settings` -> `Pages` 中，将 Source 设置为 `GitHub Actions`。
-3. 等待 Actions 中的 `Deploy GitHub Pages` 流程完成。
-4. 使用 `https://meg123343.github.io/aidanceflow/` 作为「产品 Demo 链接」。
-
-GitHub Pages 只能运行静态前端，不能托管本项目里的 `/api/kling/*` 后端接口。因此 Pages 版本会完整展示趋势选择、解析等待、视频素材、领拍练习、录制回放和发布建议；如果线上可灵 API 暂不可用，会继续走本地示例/兜底领拍内容，保证演示流程不被打断。
-
-如果需要让可灵 API 在线真实运行，推荐再部署到 Vercel：导入同一个 GitHub 仓库，Framework Preset 选择 Vite，Build Command 使用 `npm run build`，Output Directory 使用 `dist`，并在 Environment Variables 中配置 `KLING_BASE_URL`、`KLING_ACCESS_KEY`、`KLING_SECRET_KEY`。Vercel 会运行 `api/` 目录下的 Serverless 接口。
-
-注意：公开仓库会公开源码、文档和提交历史；网页上线后浏览器也会下载打包后的 JS/CSS，这是所有前端网页的基本机制。
-
-可选环境变量：
-
-```bash
-KLING_REFERENCE_IMAGE_URL=https://your-domain/reference-character.png
-```
-
-如果不填写，线上 API 默认使用部署站点里的 `/reference-character.png`。
-
-参考图组参逻辑：
-
-- `/api/kling/image-guide` 会把 `image` 参数传给可灵 image2video。
-- `/api/kling/generate` 会把同一张参考人物图加入 omni-video 的 `image_list`。
-- `/api/kling/motion-control` 会把该图作为 `image_url`，把用户参考视频作为 `video_url`。
-- 如果请求体没有显式传 `image`，服务端默认使用 `KLING_REFERENCE_IMAGE_URL`，再回落到部署站点的 `/reference-character.png`。
-
-## 提交材料
-
-- 产品 Demo 链接：优先填写 GitHub Pages 地址 `https://meg123343.github.io/aidanceflow/`；如部署 Vercel API 版，则填写 Vercel 地址。
-- 录屏介绍：参考 `docs/demo-script.md`，控制在 3 分钟以内，16:9 横屏 MP4。
-- PDF 说明文档：`docs/AIDanceFlow-product-spec.pdf`，正文来源于 `docs/product-spec.md`。
-
-重新生成 PDF：
-
-```bash
-python docs/make_product_spec_pdf.py
-```
