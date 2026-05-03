@@ -1,6 +1,6 @@
 import { getKlingClient, json, parseEndpoint } from '../_shared.ts';
 
-export async function GET(request: Request) {
+async function handleGet(request: Request) {
   try {
     const url = new URL(request.url);
     const pathParts = url.pathname.split('/').filter(Boolean);
@@ -17,3 +17,11 @@ export async function GET(request: Request) {
   }
 }
 
+export default {
+  async fetch(request: Request) {
+    if (request.method !== 'GET') {
+      return json({ error: 'Method not allowed.' }, { status: 405 });
+    }
+    return handleGet(request);
+  },
+};

@@ -1,4 +1,4 @@
-export async function GET(request: Request) {
+async function handleGet(request: Request) {
   try {
     const url = new URL(request.url).searchParams.get('url');
     if (!url) return Response.json({ error: 'Missing media URL.' }, { status: 400 });
@@ -34,3 +34,12 @@ export async function GET(request: Request) {
     return Response.json({ error: error instanceof Error ? error.message : 'Media proxy failed' }, { status: 500 });
   }
 }
+
+export default {
+  async fetch(request: Request) {
+    if (request.method !== 'GET') {
+      return Response.json({ error: 'Method not allowed.' }, { status: 405 });
+    }
+    return handleGet(request);
+  },
+};

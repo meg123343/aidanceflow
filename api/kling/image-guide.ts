@@ -1,7 +1,7 @@
 import { getKlingClient, getReferenceImageUrl, json, readJson } from './_shared.ts';
 import type { KlingGenerationRequest } from '../../server/klingClient.ts';
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
   try {
     const body = (await readJson(request)) as KlingGenerationRequest;
     if (!body.prompt?.trim()) {
@@ -19,3 +19,11 @@ export async function POST(request: Request) {
   }
 }
 
+export default {
+  async fetch(request: Request) {
+    if (request.method !== 'POST') {
+      return json({ error: 'Method not allowed.' }, { status: 405 });
+    }
+    return handlePost(request);
+  },
+};

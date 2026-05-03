@@ -1,6 +1,6 @@
 import { getReferenceImageUrl, json } from './_shared.ts';
 
-export function GET(request: Request) {
+function handleGet(request: Request) {
   return json({
     ok: true,
     runtime: 'vercel',
@@ -10,3 +10,12 @@ export function GET(request: Request) {
     referenceImageUrl: getReferenceImageUrl(request),
   });
 }
+
+export default {
+  fetch(request: Request) {
+    if (request.method !== 'GET') {
+      return json({ error: 'Method not allowed.' }, { status: 405 });
+    }
+    return handleGet(request);
+  },
+};
