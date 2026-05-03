@@ -237,7 +237,7 @@ class KlingClient {
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok || (data?.code !== undefined && data.code !== 0)) {
-      const message = data?.message || data?.msg || `Kling task query failed: HTTP ${response.status}`;
+      const message = data?.message || data?.msg || `Kling task query failed: HTTP ${response.status} at ${path}/${encodeURIComponent(taskId)}`;
       throw new Error(data?.request_id ? `${message} (request_id: ${data.request_id})` : message);
     }
 

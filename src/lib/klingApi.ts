@@ -29,6 +29,7 @@ export interface KlingGenerationResult {
 
 const POLL_INTERVAL_MS = 3000;
 const MAX_POLLS = 60;
+const MAX_QUERY_FAILURES = 2;
 
 function getStaticHostApiMessage() {
   if (typeof window !== 'undefined' && window.location.hostname.endsWith('.github.io')) {
@@ -80,9 +81,18 @@ export async function getKlingTask(taskId: string, endpoint?: KlingGenerationRes
 }
 
 export async function waitForKlingVideo(taskId: string, endpoint?: KlingGenerationResult['endpoint'], onStatus?: (status: KlingGenerationResult) => void) {
+  let queryFailures = 0;
   for (let index = 0; index < MAX_POLLS; index += 1) {
     await new Promise((resolve) => window.setTimeout(resolve, POLL_INTERVAL_MS));
-    const status = await getKlingTask(taskId, endpoint);
+    let status: KlingGenerationResult;
+    try {
+      status = await getKlingTask(taskId, endpoint);
+      queryFailures = 0;
+    } catch (error) {
+      queryFailures += 1;
+      if (queryFailures <= MAX_QUERY_FAILURES) continue;
+      throw error;
+    }
     onStatus?.(status);
 
     if (status.status === 'succeed') {
