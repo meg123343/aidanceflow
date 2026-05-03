@@ -1,5 +1,5 @@
-import { KlingClient } from '../../server/klingClient.ts';
-import type { KlingEndpoint, KlingGenerationRequest } from '../../server/klingClient.ts';
+import { KlingClient } from '../../server/klingClient';
+import type { KlingEndpoint, KlingGenerationRequest } from '../../server/klingClient';
 
 export function json(data: unknown, init?: ResponseInit) {
   return Response.json(data, init);

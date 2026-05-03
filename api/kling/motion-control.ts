@@ -1,5 +1,5 @@
-import { getKlingClient, getReferenceImageUrl, json, readJson } from './_shared.ts';
-import type { KlingGenerationRequest } from '../../server/klingClient.ts';
+import { getKlingClient, getReferenceImageUrl, json, readJson } from './_shared';
+import type { KlingGenerationRequest } from '../../server/klingClient';
 
 async function handlePost(request: Request) {
   try {

@@ -1,4 +1,4 @@
-import { getKlingClient, json, parseEndpoint } from '../_shared.ts';
+import { getKlingClient, json, parseEndpoint } from '../_shared';
 
 async function handleGet(request: Request) {
   try {

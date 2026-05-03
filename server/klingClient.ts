@@ -46,6 +46,7 @@ const DEFAULT_BASE_URL = 'https://api-beijing.klingai.com';
 const OMNI_VIDEO_PATH = '/v1/videos/omni-video';
 const IMAGE_TO_VIDEO_PATH = '/v1/videos/image2video';
 const MOTION_CONTROL_PATH = '/v1/videos/motion-control';
+const MAX_KLING_PROMPT_LENGTH = 2500;
 
 function base64UrlEncode(value: Buffer | string) {
   return Buffer.from(value).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -97,12 +98,20 @@ export function buildKlingPrompt(request: KlingGenerationRequest) {
   return parts.join('\n');
 }
 
+function toKlingPrompt(request: KlingGenerationRequest) {
+  return buildKlingPrompt(request).slice(0, MAX_KLING_PROMPT_LENGTH);
+}
+
+function toStandardOrProMode(mode?: KlingQualityMode) {
+  return mode === 'std' ? 'std' : 'pro';
+}
+
 export function buildOmniVideoPayload(request: KlingGenerationRequest) {
   const hasReferenceVideo = Boolean(request.referenceUrl?.trim());
   const payload: Record<string, unknown> = {
     model_name: request.modelName ?? 'kling-video-o1',
-    prompt: buildKlingPrompt(request),
-    mode: request.qualityMode ?? 'pro',
+    prompt: toKlingPrompt(request),
+    mode: toStandardOrProMode(request.qualityMode),
     duration: request.duration ?? '5',
     aspect_ratio: '9:16',
     sound: hasReferenceVideo ? 'off' : request.sound ?? 'on',
@@ -131,12 +140,12 @@ export function buildImageToVideoPayload(request: KlingGenerationRequest, image:
     model_name: request.modelName ?? 'kling-v2-6',
     image,
     image_tail: request.imageTail,
-    prompt: buildKlingPrompt(request),
+    prompt: toKlingPrompt(request),
     negative_prompt:
       request.negativePrompt ??
       'low quality, distorted limbs, extra fingers, deformed face, messy background, blocked hands, too fast motion, shaky camera, static frame, frozen image, no motion, still photo, slideshow, 3d cartoon, anime doll, realistic room, hotel room, bedroom, hallway, furniture, floor, wall, colored background, skin color, filled clothes, shading, photorealistic',
     duration: request.duration ?? '5',
-    mode: request.qualityMode ?? 'pro',
+    mode: toStandardOrProMode(request.qualityMode),
     sound: request.sound ?? 'on',
     watermark_info: { enabled: false },
   };
@@ -148,13 +157,13 @@ export function buildMotionControlPayload(request: KlingGenerationRequest, image
   }
 
   return {
-    model_name: request.modelName ?? 'kling-v3',
+    model_name: request.modelName ?? 'kling-v2-6',
     image_url: imageUrl,
     video_url: request.referenceUrl.trim(),
-    prompt: buildKlingPrompt(request),
+    prompt: toKlingPrompt(request),
     keep_original_sound: request.keepOriginalSound ?? 'yes',
     character_orientation: 'image',
-    mode: request.qualityMode ?? 'pro',
+    mode: toStandardOrProMode(request.qualityMode),
     watermark_info: { enabled: false },
   };
 }
