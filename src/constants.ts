@@ -35,6 +35,7 @@ const videoAssets = {
   dance2: new URL('../example/舞蹈2.mp4', import.meta.url).href,
   dance3: new URL('../example/舞蹈3.mp4', import.meta.url).href,
   dance4: new URL('../example/舞蹈4.mp4', import.meta.url).href,
+  dance5: new URL('../example/舞蹈5.mp4', import.meta.url).href,
 };
 
 export const TRENDS: Trend[] = [
@@ -135,4 +136,15 @@ export const GENERATED_DANCE: Trend = {
     { time: '3s-7s', title: '动作段', detail: '用小幅度手势连接音乐节拍，降低学习难度。' },
     { time: '7s-10s', title: '封面动作', detail: '结尾保留一个可截图的定格姿势。' },
   ],
+};
+
+export const LINK_FALLBACK_DANCE: Trend = {
+  ...GENERATED_DANCE,
+  id: 'link-fallback-dance',
+  title: '链接兜底领拍内容',
+  views: '本地兜底',
+  thumbnail: videoAssets.dance5,
+  videoUrl: videoAssets.dance5,
+  guideUrl: videoAssets.dance5,
+  description: '链接解析或线上生成较慢时，先展示这版可直接跟拍的本地兜底内容，保证演示流程不断档。',
 };

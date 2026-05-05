@@ -20,7 +20,7 @@ import {
   Wand2,
   X,
 } from 'lucide-react';
-import { GENERATED_DANCE, TRENDS, Trend } from '../constants';
+import { LINK_FALLBACK_DANCE, TRENDS, Trend } from '../constants';
 import { createGeneratedTrend, generateKlingGuide, KlingGenerationResult } from '../lib/klingApi';
 import { withMinimumDuration } from '../lib/timing';
 import TrendCard from './TrendCard';
@@ -105,7 +105,10 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
         ]);
 
         if (videoUrl) setGeneratedVideoUrl(videoUrl);
-        else setGenerationError('线上生成还需要一点时间，这次先给你一版可跟拍的示例内容。');
+        else {
+          setGeneratedVideoUrl(LINK_FALLBACK_DANCE.guideUrl);
+          setGenerationError('线上生成还需要一点时间，这次先给你一版可跟拍的本地兜底内容。');
+        }
       }, GENERATION_REVIEW_MIN_MS);
     } catch (error) {
       setGenerationError(error instanceof Error ? error.message : '线上生成暂时没有成功，这次先用示例内容继续。');
@@ -117,7 +120,13 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
 
   const startGeneratedDance = () => {
     setGeneratedReady(false);
-    onSelectTrend(generatedVideoUrl ? createGeneratedTrend(generatedVideoUrl, 'AI 即兴领拍', referenceVideoUrl.trim() || undefined) : GENERATED_DANCE);
+    onSelectTrend(
+      generatedVideoUrl === LINK_FALLBACK_DANCE.guideUrl
+        ? LINK_FALLBACK_DANCE
+        : generatedVideoUrl
+          ? createGeneratedTrend(generatedVideoUrl, 'AI 即兴领拍', referenceVideoUrl.trim() || undefined)
+          : LINK_FALLBACK_DANCE,
+    );
   };
 
   return (
@@ -314,8 +323,8 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
               <div className="grid grid-cols-[0.9fr_1fr] gap-0">
                 <div className="relative bg-black">
                   <video
-                    key={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
-                    src={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
+                    key={generatedVideoUrl ?? LINK_FALLBACK_DANCE.guideUrl}
+                    src={generatedVideoUrl ?? LINK_FALLBACK_DANCE.guideUrl}
                     className="aspect-[9/16] h-full w-full object-cover"
                     autoPlay={isGenerating || !generatedVideoUrl}
                     muted={isGenerating || !generatedVideoUrl}

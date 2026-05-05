@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { CheckCircle2, Clock3, FileVideo, Link as LinkIcon, Loader2, Play, Sparkles, TrendingUp, Upload, X } from 'lucide-react';
-import { GENERATED_DANCE } from '../constants';
+import { LINK_FALLBACK_DANCE } from '../constants';
 import { generateKlingGuide, KlingGenerationResult } from '../lib/klingApi';
 import { withMinimumDuration } from '../lib/timing';
 
@@ -15,6 +15,7 @@ type Stage = 'input' | 'analyzing' | 'ready';
 
 const analyzingSteps = ['识别人物动作', '对齐音乐卡点', '生成领拍参考'];
 const ANALYZING_MIN_MS = 3000;
+const API_PREVIEW_FALLBACK_MS = 3500;
 
 export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalProps) {
   const [url, setUrl] = useState('');
@@ -47,9 +48,10 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
     setGeneratedVideoUrl(null);
 
     try {
-      const videoUrl = await withMinimumDuration(
-        () =>
-          generateKlingGuide(
+      const videoUrl = await withMinimumDuration(async () => {
+        if (!hasReferenceUrl) return LINK_FALLBACK_DANCE.guideUrl;
+
+        const apiVideoUrl = generateKlingGuide(
             {
               mode: hasReferenceUrl ? 'reference' : 'choreography',
               endpoint: hasReferenceUrl ? 'motion-control' : 'image2video',
@@ -65,21 +67,29 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
               qualityMode: 'std',
             },
             setTaskStatus,
-          ),
-        ANALYZING_MIN_MS,
-      );
+          ).catch(() => null);
+        const fallbackVideoUrl = new Promise<string>((resolve) =>
+          window.setTimeout(() => resolve(LINK_FALLBACK_DANCE.guideUrl), API_PREVIEW_FALLBACK_MS),
+        );
+
+        return (await Promise.race([apiVideoUrl, fallbackVideoUrl])) ?? LINK_FALLBACK_DANCE.guideUrl;
+      }, ANALYZING_MIN_MS);
       setGeneratedVideoUrl(videoUrl);
       setStage('ready');
     } catch (generationError) {
       setError(generationError instanceof Error ? generationError.message : '线上生成暂时没有成功，先用示例内容继续。');
+      setGeneratedVideoUrl(LINK_FALLBACK_DANCE.guideUrl);
       setStage('ready');
     }
   };
 
   const handleStart = () => {
-    onAnalyze(generatedVideoUrl ?? undefined, generatedVideoUrl ? url.trim() || undefined : undefined);
+    onAnalyze(previewVideoUrl, isFallbackVideo ? undefined : url.trim() || undefined);
     onClose();
   };
+
+  const previewVideoUrl = generatedVideoUrl ?? LINK_FALLBACK_DANCE.guideUrl;
+  const isFallbackVideo = previewVideoUrl === LINK_FALLBACK_DANCE.guideUrl;
 
   return (
     <AnimatePresence>
@@ -169,7 +179,7 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
               {stage === 'analyzing' && (
                 <div className="grid gap-6 p-5">
                 <div className="relative mx-auto w-full max-w-[260px] overflow-hidden rounded-[26px] border border-white/10 bg-black">
-                  <video src={GENERATED_DANCE.videoUrl} className="aspect-[9/16] w-full object-cover opacity-80" autoPlay muted loop playsInline />
+                  <video src={LINK_FALLBACK_DANCE.videoUrl} className="aspect-[9/16] w-full object-cover opacity-80" autoPlay muted loop playsInline />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/35">
                     <Loader2 className="animate-spin text-orange-500" size={42} />
                   </div>
@@ -198,17 +208,17 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
                 <div className="grid gap-6 p-5">
                 <div className="relative overflow-hidden rounded-[26px] border border-white/10 bg-black">
                   <video
-                    key={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
-                    src={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
+                    key={previewVideoUrl}
+                    src={previewVideoUrl}
                     className="aspect-[9/16] w-full object-cover"
-                    autoPlay={!generatedVideoUrl}
-                    muted={!generatedVideoUrl}
-                    loop={!generatedVideoUrl}
-                    controls={Boolean(generatedVideoUrl)}
+                    autoPlay={isFallbackVideo}
+                    muted={isFallbackVideo}
+                    loop={isFallbackVideo}
+                    controls={!isFallbackVideo}
                     playsInline
                   />
                   <div className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-[11px] font-black text-black">
-                    {generatedVideoUrl ? '已生成' : '示例方案'}
+                    {isFallbackVideo ? '本地兜底' : '已生成'}
                   </div>
                 </div>
                 <div className="flex flex-col">
