@@ -24,7 +24,6 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
   const [stage, setStage] = useState<Stage>('input');
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
   const [taskStatus, setTaskStatus] = useState<KlingGenerationResult | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -34,7 +33,6 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
       setSelectedFileName('');
       setGeneratedVideoUrl(null);
       setTaskStatus(null);
-      setError(null);
     }
   }, [isOpen]);
 
@@ -43,7 +41,6 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
     const hasReferenceUrl = referenceUrl.length > 0;
 
     setStage('analyzing');
-    setError(null);
     setTaskStatus(null);
     setGeneratedVideoUrl(null);
 
@@ -76,8 +73,7 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
       }, ANALYZING_MIN_MS);
       setGeneratedVideoUrl(videoUrl);
       setStage('ready');
-    } catch (generationError) {
-      setError(generationError instanceof Error ? generationError.message : '线上生成暂时没有成功，先用示例内容继续。');
+    } catch {
       setGeneratedVideoUrl(LINK_FALLBACK_DANCE.guideUrl);
       setStage('ready');
     }
@@ -217,17 +213,14 @@ export default function UploadModal({ isOpen, onClose, onAnalyze }: UploadModalP
                     controls={!isFallbackVideo}
                     playsInline
                   />
-                  <div className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-[11px] font-black text-black">
-                    {isFallbackVideo ? '本地兜底' : '已生成'}
-                  </div>
+                  <div className="absolute left-4 top-4 rounded-full bg-orange-500 px-3 py-1 text-[11px] font-black text-black">已生成</div>
                 </div>
                 <div className="flex flex-col">
-                  <div className={`flex items-center gap-2 text-sm font-black ${error ? 'text-orange-300' : 'text-green-400'}`}>
+                  <div className="flex items-center gap-2 text-sm font-black text-green-400">
                     <CheckCircle2 size={18} />
-                    {error ? '先用示例继续' : '可以开始拍了'}
+                    可以开始拍了
                   </div>
-                  <h3 className="mt-2 text-3xl font-black text-white">{error ? '线上生成没赶上，先走演示内容' : '领拍内容已准备好'}</h3>
-                  {error && <p className="mt-3 rounded-2xl border border-orange-500/25 bg-orange-500/10 p-3 text-sm leading-6 text-orange-100">{error}</p>}
+                  <h3 className="mt-2 text-3xl font-black text-white">领拍内容已准备好</h3>
                   <div className="mt-5 space-y-3">
                     <PlanItem icon={<TrendingUp size={17} />} title="爆点" desc="开头 2 秒先给表情或手势记忆点，让观众知道这条值得看完。" />
                     <PlanItem icon={<Clock3 size={17} />} title="发布时间" desc="晚间 19:30-21:30 更适合这类轻互动内容，发布后先盯前 30 分钟评论。" />

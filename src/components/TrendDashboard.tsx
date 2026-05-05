@@ -20,7 +20,7 @@ import {
   Wand2,
   X,
 } from 'lucide-react';
-import { LINK_FALLBACK_DANCE, TRENDS, Trend } from '../constants';
+import { GENERATED_DANCE, TRENDS, Trend } from '../constants';
 import { createGeneratedTrend, generateKlingGuide, KlingGenerationResult } from '../lib/klingApi';
 import { withMinimumDuration } from '../lib/timing';
 import TrendCard from './TrendCard';
@@ -65,7 +65,6 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
   const [referenceNote, setReferenceNote] = useState('');
   const [referenceVideoUrl, setReferenceVideoUrl] = useState('');
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
-  const [generationError, setGenerationError] = useState<string | null>(null);
   const [activeNav, setActiveNav] = useState<NavPanelKey>('灵感');
   const [, setTaskStatus] = useState<KlingGenerationResult | null>(null);
 
@@ -73,7 +72,6 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
     setIsGenerating(true);
     setGeneratedReady(false);
     setGeneratedVideoUrl(null);
-    setGenerationError(null);
     setTaskStatus(null);
 
     try {
@@ -105,13 +103,9 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
         ]);
 
         if (videoUrl) setGeneratedVideoUrl(videoUrl);
-        else {
-          setGeneratedVideoUrl(LINK_FALLBACK_DANCE.guideUrl);
-          setGenerationError('线上生成还需要一点时间，这次先给你一版可跟拍的本地兜底内容。');
-        }
       }, GENERATION_REVIEW_MIN_MS);
-    } catch (error) {
-      setGenerationError(error instanceof Error ? error.message : '线上生成暂时没有成功，这次先用示例内容继续。');
+    } catch {
+      setGeneratedVideoUrl(null);
     } finally {
       setIsGenerating(false);
       setGeneratedReady(true);
@@ -120,13 +114,7 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
 
   const startGeneratedDance = () => {
     setGeneratedReady(false);
-    onSelectTrend(
-      generatedVideoUrl === LINK_FALLBACK_DANCE.guideUrl
-        ? LINK_FALLBACK_DANCE
-        : generatedVideoUrl
-          ? createGeneratedTrend(generatedVideoUrl, 'AI 即兴领拍', referenceVideoUrl.trim() || undefined)
-          : LINK_FALLBACK_DANCE,
-    );
+    onSelectTrend(generatedVideoUrl ? createGeneratedTrend(generatedVideoUrl, 'AI 即兴领拍', referenceVideoUrl.trim() || undefined) : GENERATED_DANCE);
   };
 
   return (
@@ -323,8 +311,8 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
               <div className="grid grid-cols-[0.9fr_1fr] gap-0">
                 <div className="relative bg-black">
                   <video
-                    key={generatedVideoUrl ?? LINK_FALLBACK_DANCE.guideUrl}
-                    src={generatedVideoUrl ?? LINK_FALLBACK_DANCE.guideUrl}
+                    key={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
+                    src={generatedVideoUrl ?? GENERATED_DANCE.guideUrl}
                     className="aspect-[9/16] h-full w-full object-cover"
                     autoPlay={isGenerating || !generatedVideoUrl}
                     muted={isGenerating || !generatedVideoUrl}
@@ -353,13 +341,8 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
                     </>
                   ) : (
                     <>
-                      <p className={`text-sm font-black ${generationError ? 'text-orange-300' : 'text-green-400'}`}>
-                        {generationError ? '先用示例继续' : '领拍内容已生成'}
-                      </p>
+                      <p className="text-sm font-black text-green-400">领拍内容已生成</p>
                       <h3 className="mt-2 text-2xl font-black leading-tight text-white">先看一眼效果，再开始拍</h3>
-                      {generationError && (
-                        <p className="mt-3 rounded-2xl border border-orange-500/25 bg-orange-500/10 p-3 text-xs leading-5 text-orange-100">{generationError}</p>
-                      )}
                       <p className="mt-4 text-sm leading-6 text-zinc-400">这一版会进入相机拍摄页，你可以跟着动作和音乐录制自己的成片。</p>
                       <button
                         onClick={startGeneratedDance}

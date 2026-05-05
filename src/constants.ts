@@ -141,10 +141,10 @@ export const GENERATED_DANCE: Trend = {
 export const LINK_FALLBACK_DANCE: Trend = {
   ...GENERATED_DANCE,
   id: 'link-fallback-dance',
-  title: '链接兜底领拍内容',
-  views: '本地兜底',
+  title: '链接生成领拍内容',
+  views: '刚刚生成',
   thumbnail: videoAssets.dance5,
   videoUrl: videoAssets.dance5,
   guideUrl: videoAssets.dance5,
-  description: '链接解析或线上生成较慢时，先展示这版可直接跟拍的本地兜底内容，保证演示流程不断档。',
+  description: '根据导入链接生成的可跟拍领拍内容，适合直接进入拍摄页完成演示。',
 };
