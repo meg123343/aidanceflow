@@ -4,8 +4,7 @@ AIDanceFlow 是一款面向普通 KOC 的热点手势舞开拍 Agent。它把“
 
 ## 在线演示
 
-- GitHub Pages：[https://meg123343.github.io/aidanceflow/](https://meg123343.github.io/aidanceflow/)
-- 演示视频文件：[public/demo.mp4](public/demo.mp4)
+点击查看项目录屏：[demo.mp4](public/demo.mp4)
 
 ## 当前 Demo 能力
 
