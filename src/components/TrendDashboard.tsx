@@ -34,6 +34,7 @@ interface TrendDashboardProps {
 const QUICK_FALLBACK_MS = 900;
 const API_FALLBACK_MS = 10_000;
 const GENERATION_REVIEW_MIN_MS = 3000;
+const DEMO_VIDEO_SRC = './demo.mp4';
 
 const navPanels = {
   灵感: {
@@ -183,6 +184,30 @@ export default function TrendDashboard({ onSelectTrend, onAnalyzeTrend, onOpenUp
                 </button>
               </div>
             </div>
+          </section>
+
+          <section id="demo-video" className="overflow-hidden rounded-[24px] border border-white/10 bg-black">
+            <div className="border-b border-white/10 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="flex items-center gap-2 text-[11px] font-black tracking-[0.18em] text-orange-400">
+                    <Play size={15} />
+                    DEMO VIDEO
+                  </p>
+                  <h2 className="mt-2 text-2xl font-black text-white">项目演示</h2>
+                </div>
+                <a
+                  href={DEMO_VIDEO_SRC}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="shrink-0 rounded-full bg-white/10 px-3 py-2 text-xs font-bold text-zinc-200 transition hover:bg-white/15"
+                >
+                  打开视频
+                </a>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-zinc-400">完整录屏已经放到 GitHub Pages，可在项目页直接播放。</p>
+            </div>
+            <video src={DEMO_VIDEO_SRC} className="aspect-video w-full bg-zinc-950 object-contain" controls preload="metadata" playsInline />
           </section>
 
           <AnimatePresence>

@@ -2,6 +2,10 @@
 
 AIDanceFlow 是一款面向普通 KOC 的热点手势舞开拍 Agent。它把“刷到热门内容”之后最难的几步串成一个闭环：AI 选题、动作拆解、领拍参考生成、手机化练习录制、成片回放和发布建议，帮助创作者低成本追上社媒热点。
 
+## 在线演示
+
+- GitHub Pages：[https://meg123343.github.io/aidanceflow/](https://meg123343.github.io/aidanceflow/)
+- 演示视频文件：[public/demo.mp4](public/demo.mp4)
 
 ## 当前 Demo 能力
 
